@@ -24,7 +24,7 @@ response = requests.get(url)
 data = json.loads(response.content.decode('utf-8'))
 
 producer = KafkaProducer(bootstrap_servers='172.25.0.12:9092')
-topic_name = 'AAPL'
+topic_name = 'a5_acc'
 
 
 from kafka.admin import KafkaAdminClient, NewTopic
@@ -35,7 +35,7 @@ admin_client = KafkaAdminClient(
 )
 
 topic_list = []
-topic_list.append(NewTopic(name=stock, num_partitions=1, replication_factor=1))
+topic_list.append(NewTopic(name=topic_name, num_partitions=1, replication_factor=1))
 admin_client.create_topics(new_topics=topic_list, validate_only=False)
 
 
@@ -43,4 +43,4 @@ admin_client.create_topics(new_topics=topic_list, validate_only=False)
 for d in data:
     key_bytes = bytes(d['minute'], encoding='utf-8')
     value_bytes = bytes(str(d['average']), encoding='utf-8')
-    producer.send(stock, key=key_bytes, value=value_bytes)
+    producer.send(topic_name, key=key_bytes, value=value_bytes)
